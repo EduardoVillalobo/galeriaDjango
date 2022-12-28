@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'polls.apps.PollsConfig',
-    'bootstrap5'
+    'bootstrap5',
+    'galeria.apps.GaleriaConfig',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +139,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = "127.0.0.1"
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

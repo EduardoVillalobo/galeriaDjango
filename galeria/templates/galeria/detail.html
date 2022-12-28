@@ -1,0 +1,30 @@
+{% extends 'galeria/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'galeria:index' %}"><-Volver al listado</a>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Subir</button>
+</form>
+
+<hr>
+
+<h2>Fotos de Galeria</h2>
+    <div class="row">
+        {% for foto in galeria.photo_set.all %}
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem; margin:4px">
+                    <img src="{{ foto.foto.url }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ foto.titulo }}</h5>
+                        <a href="{% url 'galeria:delete_foto' foto.id %}" class="btn btn-danger">Eliminar</a>
+
+                    </div>
+                </div>
+            </div>  
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'galeria/base.html' %}
+
+{% block content %}
+
+<h2>Nueva Galeria</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Crear</button>
+</form>
+<hr>
+<h2>Listado de últimas galería</h2>
+
+<ul>
+{% for galeria in listado_galerias %}
+    <li><a href="{% url 'galeria:detail' galeria.id %}">{{ galeria.titulo }}</a> - <a href="{% url 'galeria:delete_galeria' galeria.id %}">X Borrar</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}
