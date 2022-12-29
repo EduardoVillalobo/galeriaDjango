@@ -1,8 +1,7 @@
 {% extends 'galeria/base.html' %}
+{% load static %}
 
 {% block content %}
-
-<a href="{% url 'galeria:index' %}"><-Volver al listado</a>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -12,19 +11,30 @@
 
 <hr>
 
-<h2>Fotos de Galeria</h2>
-    <div class="row">
-        {% for foto in galeria.photo_set.all %}
-            <div class="col-md-4">
-                <div class="card" style="width: 18rem; margin:4px">
-                    <img src="{{ foto.foto.url }}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ foto.titulo }}</h5>
-                        <a href="{% url 'galeria:delete_foto' foto.id %}" class="btn btn-danger">Eliminar</a>
 
+<section class="pt-5" id="destination">
+
+    <div class="container">
+        <div class="position-absolute start-100 bottom-0 translate-middle-x d-none d-xl-block ms-xl-n4"><img src="{% static 'galeria/img/dest/shape.svg' %}" alt="destination" /></div>
+        <div class="mb-7 text-center">
+            <h3 class="fs-xl-10 fs-lg-8 fs-7 fw-bold font-cursive text-capitalize">Fotos de Galería</h3>
+        </div>
+        <div class="row">
+        {% for foto in galeria.photo_set.all %}
+            <div class="col-md-4 mb-4">
+                <div class="card overflow-hidden shadow"> <img class="card-img-top" src="{{ foto.foto.url }}" alt="{{ foto.titulo }}" />
+                <div class="card-body py-4 px-3">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between mb-3">
+                    <h4 class="text-secondary fw-medium">{{ foto.titulo }}</h4><span class="fs-1 fw-medium">-</span>
                     </div>
+                    <div class="d-flex align-items-center"><span class="fs-0 fw-medium"><a href="{% url 'galeria:delete_foto' foto.id %}" class="btn btn-danger">Eliminara</a></span></div>
                 </div>
-            </div>  
+                </div>
+            </div>
         {% endfor %}
-    </div>
+        </div>
+    </div><!-- end of .container-->
+
+</section>
+
 {% endblock %}
