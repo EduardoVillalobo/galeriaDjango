@@ -17,7 +17,7 @@ def galeria_list(request):
             return HttpResponseRedirect("/")
     else:
         form = GaleriaForm
-    return render(request, 'galeria/index.html',{
+    return render(request, 'index.html',{
             'form':form,
             'listado_galerias' : listado_galerias
         })
@@ -48,7 +48,7 @@ def model_form_upload(request, pk):
             return redirect('galeria:detail', pk=galeria.id)
     else:
         form = PhotoForm
-    return render(request, 'galeria/detail.html',{
+    return render(request, 'detail.html',{
         'form': form,
         'galeria': galeria
     })
