@@ -2,19 +2,55 @@
 
 {% block content %}
 
-<h2>Nueva Galeria</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Crear</button>
-</form>
-<hr>
-<h2>Listado de últimas galería</h2>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Nueva Galeria</h4>
+                <p class="card-description">
+                    Imagenes
+                </p>
 
-<ul>
-{% for galeria in listado_galerias %}
-    <li><a href="{% url 'galeria:detail' galeria.id %}">{{ galeria.titulo }}</a> - <a href="{% url 'galeria:delete_galeria' galeria.id %}">X Borrar</a></li>
-{% endfor %}
-</ul>
+                <form method="post" enctype="multipart/form-data"  class="forms-sample">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary mr-2">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Listado de últimas galería</h4>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th class="pl-0  pb-2 border-bottom">Galeria</th>
+                          <th class="border-bottom pb-2">Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                            {% for galeria in listado_galerias %}
+                            <tr>
+                                <td class="pl-0"><a href="{% url 'galeria:detail' galeria.id %}">{{ galeria.titulo }}</a></td> 
+                                <td>
+                                    <a type="button" class="btn btn-danger btn-icon-text" href="{% url 'galeria:delete_galeria' galeria.id %}">
+                                        <i class="ti-close btn-icon-prepend"></i>                                                    
+                                        Borrar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

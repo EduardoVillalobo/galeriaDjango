@@ -3,6 +3,9 @@ from .models import (Galeria, Photo)
 from django.http import (HttpResponseRedirect, JsonResponse)
 from django.shortcuts import redirect
 from .forms import (GaleriaForm, PhotoForm)
+from PIL import Image
+from django.contrib import messages
+
 
 def galeria_list(request):
     listado_galerias = Galeria.objects.all()
@@ -20,10 +23,24 @@ def galeria_list(request):
         })
 
 def model_form_upload(request, pk):
-    galeria = Galeria.objects.get(pk=pk)
     
+    galeria = Galeria.objects.get(pk=pk)
+    limit_kb = 150
     if request.method == 'POST':
+        try:
+            file = request.FILES['foto']
+            image = Image.open(file)
+            image.verify()
+            
+            if file.size > limit_kb * 1024:
+                messages.error(request, "Limite excedido. Máximo de 150kb")
+                return redirect('galeria:detail', pk=galeria.id)
+        except:
+            messages.error(request, "El archivo no corresponde a una imagen.")
+            return redirect('galeria:detail', pk=galeria.id)
+
         form = PhotoForm(request.POST, request.FILES)
+        
         if form.is_valid():            
             post = form.save(commit=False)
             post.galeria_id = pk
@@ -43,6 +60,5 @@ def delete_galeria(request, pk):
 
 def delete_photo(request, pk):
     foto = Photo.objects.get(pk=pk)
-    galeria = Galeria.objects.get(pk=foto.galeria_id)
     foto.delete()
-    return redirect('galeria:detail', galeria.pk)
+    return redirect('galeria:detail', Galeria.objects.get(pk=foto.galeria_id).pk)
