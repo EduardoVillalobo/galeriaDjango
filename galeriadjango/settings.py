@@ -46,8 +46,14 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'bootstrap5',
     'galeria.apps.GaleriaConfig',
-    'django_extensions'
+    'django_extensions',
+    'crispy_forms',
+    'crispy_bootstrap5'
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -143,3 +149,6 @@ INTERNAL_IPS = "127.0.0.1"
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login'

@@ -1,15 +1,27 @@
-from django.shortcuts import render
-from .models import (Galeria, Photo)
+from django.shortcuts import render, redirect
 from django.http import (HttpResponseRedirect, JsonResponse)
-from django.shortcuts import redirect
-from .forms import (GaleriaForm, PhotoForm)
-from PIL import Image
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from PIL import Image
 
+from .forms import GaleriaForm, PhotoForm, RegisterForm
+from .models import (Galeria, Photo)
 
+def sign_up(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/sign_up.html', {"form": form})
+        
+@login_required(login_url="/login")
 def galeria_list(request):
     listado_galerias = Galeria.objects.all()
-
     if request.method == 'POST':
         form = GaleriaForm(request.POST)
         if form.is_valid():
@@ -17,12 +29,14 @@ def galeria_list(request):
             return HttpResponseRedirect("/")
     else:
         form = GaleriaForm
+    
     return render(request, 'index.html',{
             'form':form,
             'listado_galerias' : listado_galerias
         })
 
-def model_form_upload(request, pk):
+@login_required(login_url="/login")
+def galeria_detail(request, pk):
     
     galeria = Galeria.objects.get(pk=pk)
     limit_kb = 150
@@ -53,12 +67,14 @@ def model_form_upload(request, pk):
         'galeria': galeria
     })
 
-def delete_galeria(request, pk):
+@login_required(login_url="/login")
+def galeria_delete(request, pk):
     galeria = Galeria.objects.get(pk=pk)
     galeria.delete()
     return redirect('/')
 
-def delete_photo(request, pk):
+@login_required(login_url="/login")
+def photo_delete(request, pk):
     foto = Photo.objects.get(pk=pk)
     foto.delete()
     return redirect('galeria:detail', Galeria.objects.get(pk=foto.galeria_id).pk)

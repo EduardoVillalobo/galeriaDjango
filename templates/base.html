@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% block title %}<title>Main</title>{% endblock %}
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="keywords" content="admin, arca"/>
+        <meta name="description" content="admin, arca"/>
+        {% block title %}
+            <title>Main</title>
+        {% endblock title %}
         {% load static %}
         <!-- ===============================================-->
         <!--    Stylesheets Admin-->
@@ -12,28 +16,30 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
               rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-              crossorigin="anonymous">
+              crossorigin="anonymous"/>
         <link rel="stylesheet"
-              href="{% static 'galeria/vendors/feather/feather.css' %}">
+              href="{% static 'galeria/vendors/feather/feather.css' %}"/>
         <link rel="stylesheet"
-              href="{% static 'galeria/vendors/ti-icons/css/themify-icons.css' %}">
+              href="{% static 'galeria/vendors/ti-icons/css/themify-icons.css' %}"/>
         <link rel="stylesheet"
-              href="{% static 'galeria/vendors/css/vendor.bundle.base.css' %}">
+              href="{% static 'galeria/vendors/css/vendor.bundle.base.css' %}"/>
         <!-- endinject -->
         <!-- Plugin css for this page -->
         <link rel="stylesheet"
-              href="{% static 'galeria/vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+              href="{% static 'galeria/vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}"/>
         <link rel="stylesheet"
-              href="{% static 'galeria/vendors/ti-icons/css/themify-icons.css' %}">
+              href="{% static 'galeria/vendors/ti-icons/css/themify-icons.css' %}"/>
         <link rel="stylesheet"
               type="text/css"
-              href="{% static 'galeria/js/select.dataTables.min.css' %}">
+              href="{% static 'galeria/js/select.dataTables.min.css' %}"/>
         <!-- End plugin css for this page -->
         <!-- inject:css -->
         <link rel="stylesheet"
-              href="{% static 'galeria/css/vertical-layout-light/style.css' %}">
+              href="{% static 'galeria/css/vertical-layout-light/style.css' %}"/>
         <!-- endinject -->
         <link rel="shortcut icon" href="{% static 'galeria/images/favicon.png' %}" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Volkhov:wght@700&amp;display=swap"
+              rel="stylesheet"/>
         <!-- ===============================================-->
         <!--    Stylesheets Propios-->
         <!-- ===============================================-->
@@ -43,11 +49,20 @@
         {% block navbar %}
             <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-                    <a class="navbar-brand brand-logo mr-5" href="{% url 'galeria:index' %}">
-                        <img src="{% static 'galeria/images/logo.svg' %}" class="mr-2" alt="logo"/>
+                    <a class="navbar-brand brand-logo mr-5"
+                       href="{% url 'galeria:galeria_list' %}">
+                        <img src="{% static 'galeria/images/logo.svg' %}"
+                             class="mr-2"
+                             alt="logo"
+                             height="auto"
+                             width="auto"/>
                     </a>
-                    <a class="navbar-brand brand-logo-mini" href="{% url 'galeria:index' %}">
-                        <img src="{% static 'galeria/images/logo-mini.svg' %}" alt="logo"/>
+                    <a class="navbar-brand brand-logo-mini"
+                       href="{% url 'galeria:galeria_list' %}">
+                        <img src="{% static 'galeria/images/logo-mini.svg' %}"
+                             alt="logo"
+                             height="auto"
+                             width="auto"/>
                     </a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -61,6 +76,41 @@
                     </ul>
                     <ul class="navbar-nav navbar-nav-right">
                         <!-- Profile -->
+                        <li class="nav-item nav-profile dropdown">
+                            {% if user.is_authenticated %}
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   data-toggle="dropdown"
+                                   id="profileDropdown">
+                                    <span class="navbar-text">Loggeado como {{ user.username }}</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                                     aria-labelledby="profileDropdown">
+                                    <a class="dropdown-item" href="/logout">
+                                        <i class="ti-power-off text-primary"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                            {% else %}
+                                <a class="nav-link dropdown-toggle"
+                                   href="/login"
+                                   data-toggle="dropdown"
+                                   id="profileDropdown">
+                                    Login
+                                </a>
+                            {% endif %}
+                            <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
+                                 aria-labelledby="profileDropdown">
+                                <a class="dropdown-item">
+                                    <i class="ti-settings text-primary"></i>
+                                    Settings
+                                </a>
+                                <a class="dropdown-item">
+                                    <i class="ti-power-off text-primary"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
                     </ul>
                     <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
                             type="button"
@@ -69,25 +119,35 @@
                     </button>
                 </div>
             </nav>
-        {% endblock %}
+        {% endblock navbar %}
         <div class="container-fluid page-body-wrapper">
             <!-- Sidebar -->
             {% block sidebar %}
                 <nav class="sidebar sidebar-offcanvas" id="sidebar">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'galeria:index' %}">
+                            <a class="nav-link" href="{% url 'galeria:galeria_list' %}">
                                 <i class="icon-grid menu-icon"></i>
                                 <span class="menu-title">Galeria</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
-            {% endblock %}
+            {% endblock sidebar %}
             <!-- Main Panel -->
             <div class="main-panel">
                 <div class="content-wrapper">
-                    {% block content %}{% endblock %}
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'galeria:galeria_list' %}">Inicio</a>
+                            </li>
+                            {% block breadcrum %}
+                            {% endblock breadcrum %}
+                        </ol>
+                    </nav>
+                    {% block content %}
+                    {% endblock content %}
                 </div>
             </div>
         </div>
@@ -114,7 +174,5 @@
         <script src="{% static 'galeria/js/dashboard.js' %}"></script>
         <script src="{% static 'galeria/js/Chart.roundedBarCharts.js' %}"></script>
         <!-- End custom js for this page-->
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Volkhov:wght@700&amp;display=swap"
-              rel="stylesheet">
     </body>
 </html>

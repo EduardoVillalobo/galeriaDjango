@@ -1,7 +1,10 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block breadcrum %}
+    <li class="breadcrumb-item active" aria-current="page">Galeria</li>
+{% endblock breadcrum %}
 
 {% block content %}
-
 <div class="row">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
@@ -36,9 +39,9 @@
                       <tbody>
                             {% for galeria in listado_galerias %}
                             <tr>
-                                <td class="pl-0"><a href="{% url 'galeria:detail' galeria.id %}">{{ galeria.titulo }}</a></td> 
+                                <td class="pl-0"><a href="{% url 'galeria:galeria_detail' galeria.id %}">{{ galeria.titulo }}</a></td> 
                                 <td>
-                                    <a type="button" class="btn btn-danger btn-icon-text" href="{% url 'galeria:delete_galeria' galeria.id %}">
+                                    <a type="button" class="btn btn-danger btn-icon-text" href="{% url 'galeria:galeria_delete' galeria.id %}">
                                         <i class="ti-close btn-icon-prepend"></i>                                                    
                                         Borrar
                                     </a>
@@ -53,4 +56,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock content %}
