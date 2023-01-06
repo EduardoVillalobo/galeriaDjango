@@ -24,8 +24,13 @@ def galeria_list(request):
     listado_galerias = Galeria.objects.all()
     if request.method == 'POST':
         form = GaleriaForm(request.POST)
+        
+        
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.author = request.user
+            import pdb; pdb.set_trace()
+            post.save()
             return HttpResponseRedirect("/")
     else:
         form = GaleriaForm
@@ -48,18 +53,19 @@ def galeria_detail(request, pk):
             
             if file.size > limit_kb * 1024:
                 messages.error(request, "Limite excedido. Máximo de 150kb")
-                return redirect('galeria:detail', pk=galeria.id)
+                return redirect('galeria:galeria_detail', pk=galeria.id)
         except:
             messages.error(request, "El archivo no corresponde a una imagen.")
-            return redirect('galeria:detail', pk=galeria.id)
+            return redirect('galeria:galeria_detail', pk=galeria.id)
 
         form = PhotoForm(request.POST, request.FILES)
         
         if form.is_valid():            
             post = form.save(commit=False)
+            post.author = request.user
             post.galeria_id = pk
             post.save()
-            return redirect('galeria:detail', pk=galeria.id)
+            return redirect('galeria:galeria_detail', pk=galeria.id)
     else:
         form = PhotoForm
     return render(request, 'detail.html',{
@@ -77,4 +83,4 @@ def galeria_delete(request, pk):
 def photo_delete(request, pk):
     foto = Photo.objects.get(pk=pk)
     foto.delete()
-    return redirect('galeria:detail', Galeria.objects.get(pk=foto.galeria_id).pk)
+    return redirect('galeria:galeria_detail', Galeria.objects.get(pk=foto.galeria_id).pk)
