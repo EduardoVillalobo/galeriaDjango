@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block breadcrum %}
+    <li class="breadcrumb-item " aria-current="page">
+        <a href="{% url 'galeria:galeria_list' %}">Galeria</a>
+    </li>
+    <li class="breadcrumb-item " aria-current="page">
+        <a href="{% url 'galeria:galeria_detail' galeria.pk %}">{{ galeria.titulo }}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">{{ photo.titulo }}</li>
+{% endblock breadcrum %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">{{ photo.titulo }}</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-8">
+                            <img src="{{ photo.foto.url }}" alt="{{ photo.titulo }}" class="img-fluid"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <form method="post" class="forms-sample">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary mr-2">Enviar</button>
+                        </form>
+                    </div>
+                    <hr/>
+                    <h4 class="card-title">Comentarios</h4>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                            {% if photo.comentario_set.count > 0 %}
+                                <span class="border">{{ photo.comentario_set.count }} comentarios para mostrar</span>
+                            {% else %}
+                                <span class="border">No hay comentarios para mostrar</span>
+                            {% endif %}
+                            </div>
+                            <ul class="icon-data-list">
+                                {% for comen in photo.comentario_set.all %}
+                                    <li>
+                                        <div class="d-flex">
+                                            <img src="{% static 'galeria/images/faces/face1.jpg' %}" alt="user"/>
+                                            <div>
+                                                {% if comen.author.first_name %}
+                                                    <p class="text-info mb-1">{{ comen.author.first_name }} {{ comen.author.last_name }}</p>
+                                                {% else %}
+                                                    <p class="text-info mb-1">{{ comen.author }}</p>
+                                                {% endif %}
+                                                <p class="mb-0">{{ comen.comentario }}</p>
+                                                <small>{{ comen.pub_date }}</small>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

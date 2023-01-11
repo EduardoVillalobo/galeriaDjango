@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Galeria, Photo
+from .models import Galeria, Photo, Comentario
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -25,3 +25,12 @@ class GaleriaForm(forms.ModelForm):
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['comentario']
+        widgets = {
+            'comentario': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+

@@ -5,8 +5,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from PIL import Image
 
-from .forms import GaleriaForm, PhotoForm, RegisterForm
-from .models import (Galeria, Photo)
+from .forms import GaleriaForm, PhotoForm, RegisterForm, ComentarioForm
+from .models import Galeria, Photo, Comentario
 
 def sign_up(request):
     if request.method == 'POST':
@@ -29,7 +29,6 @@ def galeria_list(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-            import pdb; pdb.set_trace()
             post.save()
             return HttpResponseRedirect("/")
     else:
@@ -84,3 +83,25 @@ def photo_delete(request, pk):
     foto = Photo.objects.get(pk=pk)
     foto.delete()
     return redirect('galeria:galeria_detail', Galeria.objects.get(pk=foto.galeria_id).pk)
+
+@login_required(login_url="/login")
+def photo_detail(request, pk):
+    foto = Photo.objects.get(pk=pk)
+    galeria = Galeria.objects.get(photo = pk)
+    
+
+    if request.method == 'POST':
+        form = ComentarioForm(request.POST)    
+        
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.photo = foto
+            post.save()
+    else:
+        form = ComentarioForm
+    return render(request, 'photo_detail.html', {
+        'galeria':galeria,
+        'photo': foto,
+        'form':form
+    })
