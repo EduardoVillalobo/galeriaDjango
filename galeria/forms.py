@@ -33,4 +33,3 @@ class ComentarioForm(forms.ModelForm):
         widgets = {
             'comentario': forms.TextInput(attrs={'class': 'form-control'}),
         }
-

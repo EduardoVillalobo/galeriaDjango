@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'galeria.apps.GaleriaConfig',
     'django_extensions',
     'crispy_forms',
-    'crispy_bootstrap5'
+    'crispy_bootstrap5',
+    'mensaje'
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
