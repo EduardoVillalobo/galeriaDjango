@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from io import BytesIO
 from .models import Mensaje
 from .forms import MensajeForm
-from django.http import FileResponse
-from reportlab.pdfgen import canvas
+from django.http import FileResponse, HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 # Create your views here.
 
 def mensaje_list(request):
@@ -31,20 +33,18 @@ def mensaje_create(request):
 
 def mensaje_pdf(request, pk):
     mensaje = Mensaje.objects.get(pk=pk)
+    template = get_template('mensaje/mensaje_pdf.html')
+    context = {'mensaje': mensaje}
+    html = template.render(context)
 
     # Crear el archivo PDF en memoria
     buffer = BytesIO()
-    p = canvas.Canvas(buffer)
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), buffer)
 
-    # Generar el contenido del PDF
-    p.setFont("Helvetica", 12)
-    p.drawString(100, 750, "Título: " + mensaje.titulo)
-    p.drawString(100, 700, "Cuerpo: " + mensaje.cuerpo)
+    # Verificar si la generación del PDF fue exitosa
+    if not pdf.err:
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f"mensaje_{pk}.pdf")
 
-    # Finalizar el PDF
-    p.showPage()
-    p.save()
-
-    # Reiniciar el buffer de lectura y devolver la respuesta
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename=f"mensaje_{pk}.pdf")
+    # En caso de error, mostrar un mensaje o redirigir a una página de error
+    return HttpResponse("Ocurrió un error al generar el PDF")
