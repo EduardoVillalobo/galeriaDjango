@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
+from io import BytesIO
 from .models import Mensaje
 from .forms import MensajeForm
-from django.http import HttpResponse
-from django.template.loader import get_template
-import pdfkit
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
 # Create your views here.
 
 def mensaje_list(request):
@@ -30,14 +30,21 @@ def mensaje_create(request):
     return render(request, 'mensaje/mensaje_create.html', {'form': form})
 
 def mensaje_pdf(request, pk):
-    path_wh = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wh)
     mensaje = Mensaje.objects.get(pk=pk)
-    template = get_template('mensaje/mensaje_pdf.html')
-    html = template.render({'mensaje': mensaje})
-    options = {'page-size': 'A4', 'orientation': 'Landscape'}
-    pdf = pdfkit.from_string(html, False, options, configuration=config)
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="mensaje_{pk}.pdf"'
-    response.write(pdf)
-    return response
+
+    # Crear el archivo PDF en memoria
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer)
+
+    # Generar el contenido del PDF
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 750, "Título: " + mensaje.titulo)
+    p.drawString(100, 700, "Cuerpo: " + mensaje.cuerpo)
+
+    # Finalizar el PDF
+    p.showPage()
+    p.save()
+
+    # Reiniciar el buffer de lectura y devolver la respuesta
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename=f"mensaje_{pk}.pdf")
