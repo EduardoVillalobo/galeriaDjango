@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect
-from django.http import (HttpResponseRedirect, JsonResponse)
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
+from django.db import transaction
 from PIL import Image
 
 from .forms import GaleriaForm, PhotoForm, RegisterForm, ComentarioForm
 from .models import Galeria, Photo, Comentario
 
+@login_required(login_url="/login")
 def sign_up(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -20,30 +21,30 @@ def sign_up(request):
     return render(request, 'registration/sign_up.html', {"form": form})
         
 @login_required(login_url="/login")
+@transaction.atomic
 def galeria_list(request):
-    listado_galerias = Galeria.objects.all()
     if request.method == 'POST':
         form = GaleriaForm(request.POST)
-        
-        
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return HttpResponseRedirect("/")
+            return redirect("/")
     else:
-        form = GaleriaForm
+        form = GaleriaForm()
     
+    listado_galerias = Galeria.objects.all()
     return render(request, 'index.html',{
             'form':form,
             'listado_galerias' : listado_galerias
         })
 
 @login_required(login_url="/login")
+@transaction.atomic
 def galeria_detail(request, pk):
-    
-    galeria = Galeria.objects.get(pk=pk)
     limit_kb = 150
+    galeria = get_object_or_404(Galeria, pk=pk)
+    
     if request.method == 'POST':
         try:
             file = request.FILES['foto']
@@ -66,40 +67,46 @@ def galeria_detail(request, pk):
             post.save()
             return redirect('galeria:galeria_detail', pk=galeria.id)
     else:
-        form = PhotoForm
+        form = PhotoForm()
+
     return render(request, 'detail.html',{
         'form': form,
         'galeria': galeria
     })
 
 @login_required(login_url="/login")
+@transaction.atomic
 def galeria_delete(request, pk):
     galeria = Galeria.objects.get(pk=pk)
     galeria.delete()
     return redirect('/')
 
 @login_required(login_url="/login")
+@transaction.atomic
 def photo_delete(request, pk):
     foto = Photo.objects.get(pk=pk)
     foto.delete()
-    return redirect('galeria:galeria_detail', Galeria.objects.get(pk=foto.galeria_id).pk)
+    return redirect('galeria:galeria_detail', pk=foto.galeria_id)
 
 @login_required(login_url="/login")
+@transaction.atomic
 def photo_detail(request, pk):
-    foto = Photo.objects.get(pk=pk)
-    galeria = Galeria.objects.get(photo = pk)
+    foto = get_object_or_404(Photo, pk=pk)
+    galeria = get_object_or_404(Galeria, photo = pk)
     
-
     if request.method == 'POST':
         form = ComentarioForm(request.POST)    
-        
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.photo = foto
-            post.save()
+        try:
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.author = request.user
+                post.photo = foto
+                post.save()
+        except Exception as e:
+            messages.error(request, f"Error al guardar el comentario: {str(e)}")
     else:
-        form = ComentarioForm
+        form = ComentarioForm()
+
     return render(request, 'photo_detail.html', {
         'galeria':galeria,
         'photo': foto,
