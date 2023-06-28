@@ -5,8 +5,25 @@ from .forms import MensajeForm
 from django.http import FileResponse, HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+import requests
 
 # Create your views here.
+def obtener_temperatura():
+    url = 'http://dataservice.accuweather.com/currentconditions/v1/{ciudad}?apikey={api_key}'
+    ciudad = '4700'  # Reemplaza con el nombre de tu ciudad
+    api_key = '8Id866MPZc6zZgiFn9DwCfzN1BOn5R3v'  # Reemplaza con tu propia API Key de OpenWeatherMap
+    
+    url = url.format(ciudad=ciudad, api_key=api_key)
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        temperatura = str(data[0]['Temperature']['Metric']['Value']) + "°C"
+        
+        return temperatura
+    except requests.exceptions.RequestException as e:
+        print('Error al obtener la temperatura:', e)
+        return None
 
 def mensaje_list(request):
     if request.method == 'POST':
@@ -19,7 +36,8 @@ def mensaje_list(request):
         form = MensajeForm()   
 
     mensajes = Mensaje.objects.all()
-    return render(request, 'mensaje/mensaje_list.html', {'form':form,'listado_mensajes': mensajes})
+    temperatura = obtener_temperatura()
+    return render(request, 'mensaje/mensaje_list.html', {'form':form,'listado_mensajes': mensajes, 'temperatura':temperatura})
 
 def mensaje_create(request):
     if request.method == 'POST':
