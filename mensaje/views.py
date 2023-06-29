@@ -4,8 +4,10 @@ from .models import Mensaje
 from .forms import MensajeForm
 from django.http import FileResponse, HttpResponse
 from django.template.loader import get_template
+from django.contrib.staticfiles.storage import staticfiles_storage
 from xhtml2pdf import pisa
 import requests
+import os
 
 # Create your views here.
 def obtener_temperatura():
@@ -58,6 +60,10 @@ def mensaje_pdf(request, pk):
     context = {'mensaje': mensaje}
     html = template.render(context)
 
+    css_files = ['/galeria/css/style.css', 'galeria/syle.css']
+    linked_css = ''.join(f'<link rel="stylesheet" type="text/css" href="{css}>"' for css in css_files)
+    html = html.replace('</head>', f'{linked_css}</head>')
+    
     # Crear el archivo PDF en memoria
     buffer = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), buffer)
