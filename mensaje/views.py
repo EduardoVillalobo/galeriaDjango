@@ -18,7 +18,10 @@ def obtener_temperatura():
     try:
         response = requests.get(url)
         data = response.json()
-        temperatura = str(data[0]['Temperature']['Metric']['Value']) + "°C"
+        if(response.status_code == 503):
+            temperatura = "Servicio no disponible." + str(data['Message'])
+        else:
+            temperatura = str(data[0]['Temperature']['Metric']['Value']) + "°C"
         
         return temperatura
     except requests.exceptions.RequestException as e:
@@ -44,7 +47,7 @@ def mensaje_create(request):
         form = MensajeForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('mensaje_list')
+            return redirect('mensaje:mensaje_list')
     else:
         form = MensajeForm()
     return render(request, 'mensaje/mensaje_create.html', {'form': form})
