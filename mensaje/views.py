@@ -4,7 +4,6 @@ from .models import Mensaje
 from .forms import MensajeForm
 from django.http import FileResponse, HttpResponse
 from django.template.loader import get_template
-from django.contrib.staticfiles.storage import staticfiles_storage
 from xhtml2pdf import pisa
 import requests
 import os
@@ -13,7 +12,7 @@ import os
 def obtener_temperatura():
     url = 'http://dataservice.accuweather.com/currentconditions/v1/{ciudad}?apikey={api_key}'
     ciudad = '4700'  # Reemplaza con el nombre de tu ciudad
-    api_key = '8Id866MPZc6zZgiFn9DwCfzN1BOn5R3v'  # Reemplaza con tu propia API Key de OpenWeatherMap
+    api_key = os.environ['ACCU_WEATHER_KEY']  # Reemplaza con tu propia API Key de OpenWeatherMap
     
     url = url.format(ciudad=ciudad, api_key=api_key)
     
