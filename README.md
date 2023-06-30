@@ -4,16 +4,21 @@ Proyecto de prueba realizado en Django y el dashboard Skydash.
 
 ## Tabla de Contenidos
 
-- [Instalación](#installation)
-- [Utilización](#usage)
+- [Instalación](#instalacion)
+- [Utilización](#utilizacion)
 
 ## Instalación
 
 Para instalar el siguiente proyecto, siga los siguientes pasos:
 
 1. Clonar repositorio: `git clone https://github.com/EduardoVillalobo/galeriaDjango.git`
-2. Instalar las dependencias: `pip install -r requirements.txt`
-3. Configurar la base de datos: `python manage.py migrate`
+2. Crear entorno virual: `python -m venv venv`
+3. Activar entorno virtual:
+   - En Windows: `venv\Scripts\activate`
+   - En macOS/Linux: `source venv/bin/activate`
+4. Instalar las dependencias: `pip install -r requirements.txt`
+6. Correr migrations: `python manage.py migrate`
+7. Arrancar servidor: `python manage.py runserver`
 
 ## Utilización
 
